@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>留言板 | 常乐天</title>
+    <meta name="description" content="常乐天的留言板，欢迎留言QuQ">
+    <meta name="author" content="常乐天">
+    <meta property="og:title" content="留言板 | 常乐天">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="zh_CN">
+
+    <link rel="canonical" href="https://stellaric.site/guestbook.html">
+    <link rel="stylesheet" href="style.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "留言板 | 常乐天",
+      "url": "https://stellaric.site/guestbook.html",
+      "author": {
+        "@type": "Person",
+        "name": "常乐天"
+      }
+    }
+    </script>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="blog.html">博客</a>
+                <a href="projects.html">小项目</a>
+                <a href="guestbook.html" class="active">留言板</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="page-header fade-in">
+            <div class="eyebrow">GUESTBOOK / LEAVE A MESSAGE</div>
+            <h1>留言板</h1>
+            <p class="subtitle">说点什么吧...?</p>
+        </header>
+
+        <main class="fade-in d1">
+            <!-- 提交留言表单 -->
+            <div class="gb-form">
+                <div id="reply-indicator">
+                    正在回复 <strong id="reply-to-name"></strong> 的留言
+                    <button onclick="cancelReply()">取消</button>
+                </div>
+                <input type="text" id="nickname" placeholder="你的昵称（匿名可不填）" value="匿名用户">
+                <textarea id="content" rows="4" placeholder="说点什么吧..."></textarea>
+                <button id="submit-btn" onclick="submitComment()">发送留言</button>
+                <div id="submit-status"></div>
+            </div>
+
+            <!-- 留言列表容器 -->
+            <div id="comments-list">
+                <p class="status-msg">加载中...</p>
+            </div>
+        </main>
+
+        <footer>
+            <div class="foot-line">
+                <span>© 2024 SYFZ 2509 常乐天</span>
+                <span>POWERED BY CLOUDFLARE PAGES</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // ⚠️ 把这里换成你服务器的真实 IP 和端口！
+        const API_BASE = "http://119.45.14.187:8000/api/comments";
+
+        let currentParentId = 0;
+
+        // ========== 工具函数：显示错误信息 ==========
+        function showError(containerId, message) {
+            document.getElementById(containerId).innerHTML =
+                `<div class="error-msg">⚠ ${message}</div>`;
+        }
+
+        // ========== 获取并渲染留言 ==========
+        async function loadComments() {
+            try {
+                const response = await fetch(`${API_BASE}`);
+
+                if (!response.ok) {
+                    throw new Error(`服务器返回错误: HTTP ${response.status}`);
+                }
+
+                const comments = await response.json();
+
+                // 构建树状结构
+                const mainComments = comments.filter(c => c.parent_id === 0);
+                const replies = comments.filter(c => c.parent_id !== 0);
+
+                let html = '';
+                mainComments.forEach(main => {
+                    html += renderSingleComment(main);
+                    const subReplies = replies.filter(r => r.parent_id === main.id);
+                    subReplies.forEach(reply => {
+                        html += `<div class="reply-box">${renderSingleComment(reply)}</div>`;
+                    });
+                });
+
+                document.getElementById('comments-list').innerHTML =
+                    html || '<p class="status-msg">还没有留言，快来抢沙发！</p>';
+
+            } catch (error) {
+                console.error('加载留言失败:', error);
+                showError('comments-list',
+                    `无法连接到留言服务器 (${error.message})。` +
+                    `请确认：①服务器正在运行 ②端口 8000 已在安全组中放行 ③地址 ${API_BASE} 可访问`
+                );
+            }
+        }
+
+        // ========== 渲染单条留言 ==========
+        function renderSingleComment(c) {
+            const date = new Date(c.timestamp * 1000).toLocaleString('zh-CN');
+            // 转义 HTML 防止 XSS
+            const safeName = c.nickname.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const safeContent = c.content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+            return `
+                <div class="comment-box">
+                    <div class="comment-meta">
+                        <span><strong>${safeName}</strong> · <span class="meta-date">${date}</span></span>
+                        <span class="actions">
+                            <button onclick="likeComment(${c.id}, this)">赞 ${c.likes}</button>
+                            <button onclick="setReply(${c.id}, '${safeName}')">回复</button>
+                        </span>
+                    </div>
+                    <div class="comment-content">${safeContent}</div>
+                </div>
+            `;
+        }
+
+        // ========== 提交留言 ==========
+        async function submitComment() {
+            const btn = document.getElementById('submit-btn');
+            const statusDiv = document.getElementById('submit-status');
+            const nickname = document.getElementById('nickname').value.trim() || "匿名用户";
+            const content = document.getElementById('content').value.trim();
+
+            if (!content) {
+                statusDiv.innerHTML = '<span style="color:var(--fg);">内容不能为空！</span>';
+                return;
+            }
+
+            // 禁用按钮防止重复提交
+            btn.disabled = true;
+            btn.textContent = '发送中...';
+            statusDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nickname, content, parent_id: currentParentId })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`服务器返回错误: HTTP ${response.status}`);
+                }
+
+                // 成功！清空表单并刷新
+                document.getElementById('content').value = '';
+                cancelReply();
+                statusDiv.innerHTML = '<span style="color:var(--fg);">✓ 发送成功！</span>';
+                loadComments();
+
+            } catch (error) {
+                console.error('发送留言失败:', error);
+                statusDiv.innerHTML = `<span style="color:var(--fg);">✕ 发送失败: ${error.message}</span>`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '发送留言';
+            }
+        }
+
+        // ========== 点赞 ==========
+        async function likeComment(id, btn) {
+            try {
+                const response = await fetch(`${API_BASE}/${id}/like`, { method: 'POST' });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                let currentLikes = parseInt(btn.textContent.trim().split(' ')[1]) || 0;
+                btn.textContent = `赞 ${currentLikes + 1}`;
+                btn.disabled = true;
+            } catch (error) {
+                console.error('点赞失败:', error);
+                alert('点赞失败，请检查网络连接');
+            }
+        }
+
+        // ========== 楼中楼回复 ==========
+        function setReply(parentId, nickname) {
+            currentParentId = parentId;
+            document.getElementById('reply-indicator').style.display = 'block';
+            document.getElementById('reply-to-name').innerText = nickname;
+            document.getElementById('content').focus();
+        }
+
+        function cancelReply() {
+            currentParentId = 0;
+            document.getElementById('reply-indicator').style.display = 'none';
+        }
+
+        // ========== 页面加载时执行 ==========
+        loadComments();
+    </script>
+</body>
+</html>
