@@ -55,8 +55,15 @@
 </head>
 <body>
 
+  <!-- 滚动进度条 -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- 自定义光标 -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
   <!-- ===== 导航 ===== -->
-  <nav>
+  <nav id="navbar">
     <div class="nav-container">
       <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
       <div class="nav-links">
@@ -64,6 +71,19 @@
         <a href="blog.html">博客</a>
         <a href="projects.html">小项目</a>
         <a href="guestbook.html">留言板</a>
+        <button class="theme-toggle" id="themeToggle" title="切换主题">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
       </div>
     </div>
   </nav>
@@ -72,23 +92,36 @@
   <main class="container">
 
     <!-- Hero -->
-    <header class="page-header fade-in">
+    <header class="page-header reveal">
       <div class="eyebrow">PERSONAL HOMEPAGE / 2026</div>
-      <h1>你好，我是常乐天</h1>
+      <h1 class="text-reveal">
+        <span class="inner">你好，<em class="accent">我是</em></span><br>
+        <span class="inner" style="transition-delay: 0.1s;">常乐天</span>
+      </h1>
       <p class="subtitle">
         太原师院附中学生 · Student &amp; Developer
         <br />
-        <small style="color:var(--fg-4); font-family: var(--font-mono); font-size: 0.78rem;">
+        <small>
           本站已通过 腾讯云服务器 合法部署，内容由本人原创并经权威性审核 ·
           <a class="link" href="https://fszx.tynu.edu.cn/" target="_blank" rel="noopener noreferrer">学校官网可查</a>
         </small>
       </p>
+      <!-- Hero 装饰线条 -->
+      <div class="hero-decoration" aria-hidden="true">
+        <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.5">
+          <circle cx="100" cy="100" r="80" class="line-draw" />
+          <circle cx="100" cy="100" r="60" class="line-draw" style="transition-delay: 0.2s" />
+          <circle cx="100" cy="100" r="40" class="line-draw" style="transition-delay: 0.4s" />
+          <line x1="20" y1="100" x2="180" y2="100" class="line-draw" style="transition-delay: 0.6s" />
+          <line x1="100" y1="20" x2="100" y2="180" class="line-draw" style="transition-delay: 0.6s" />
+        </svg>
+      </div>
     </header>
 
     <!-- 01 关于我 -->
-    <section class="fade-in d1">
+    <section class="reveal d1">
       <h2><span class="sec-num">01</span>关于我</h2>
-      <p>
+      <p class="drop-cap">
         我目前就读于 <strong>太原师范学院附属中学</strong>
         （<a class="link" href="https://fszx.tynu.edu.cn/" target="_blank" rel="noopener noreferrer">官网 https://fszx.tynu.edu.cn/</a>），
         对 <strong>计算机科学 &amp; 地理学</strong> 充满热情。建立这个主页是为了记录我的学习历程和项目经验，
@@ -101,9 +134,9 @@
     </section>
 
     <!-- 02 教育经历 -->
-    <section class="fade-in d2">
+    <section class="reveal d2">
       <h2><span class="sec-num">02</span>教育经历</h2>
-      <ul class="list-line">
+      <ul class="timeline">
         <li>
           <span class="li-label">2025 — 至今</span>
           <span><strong>太原师范学院附属中学</strong>（<a class="link" href="https://fszx.tynu.edu.cn/" target="_blank" rel="noopener noreferrer">太原师范学院附属中学</a>）· 高中部 · 高一年级 · 2509 班</span>
@@ -116,15 +149,15 @@
     </section>
 
     <!-- 03 项目与成就 -->
-    <section class="fade-in d3">
+    <section class="reveal d3">
       <h2><span class="sec-num">03</span>项目与成就</h2>
 
-      <article class="card">
-        <div class="meta">PROJECT · 01 · <a class="link" href="https://stellaric.site/projects" target="_blank" rel="noopener noreferrer">源码存档</a></div>
-        <h3>希沃 AI 桌宠项目</h3>
+      <article class="card" onclick="window.location.href='projects.html'">
+        <div class="meta">PROJECT · 01 · <a class="link" href="https://stellaric.site/projects" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">源码存档</a></div>
+        <h3><a href="projects.html" onclick="event.stopPropagation()">希沃 AI 桌宠项目</a></h3>
         <p>
           全国第一个在希沃白板上稳定运行的桌宠程序；接入 DeepSeek 实现对话功能，原创性极强。
-          相关文章发布于 <a class="link" href="https://space.bilibili.com/1948061457" target="_blank" rel="noopener noreferrer">B 站 -stellaris-群星</a>，
+          相关文章发布于 <a class="link" href="https://space.bilibili.com/1948061457" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">B 站 -stellaris-群星</a>，
           技术文章可在本站博客页查阅。
         </p>
       </article>
@@ -155,7 +188,7 @@
     </section>
 
     <!-- 04 找到我 -->
-    <section class="fade-in d4">
+    <section class="reveal d4">
       <h2><span class="sec-num">04</span>找到我</h2>
       <p>如果你想和我交流，可以通过以下方式找到我：</p>
       <ul class="list-line">
@@ -179,7 +212,7 @@
     </section>
 
     <!-- ===== 05 真实性声明（新增） ===== -->
-    <section class="fade-in d4">
+    <section class="reveal d5">
       <h2><span class="sec-num">05</span>内容真实性声明</h2>
       <p>
         本站（<a class="link" href="https://stellaric.site" target="_blank" rel="noopener noreferrer">stellaric.site</a>）
@@ -225,6 +258,98 @@
       <span>POWERED BY CLOUDFLARE PAGES</span>
     </div>
   </footer>
+
+  <script>
+    // ===== 导航栏滚动效果 =====
+    const navbar = document.getElementById('navbar');
+    const scrollProgress = document.getElementById('scrollProgress');
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      scrollProgress.style.width = scrollPercent + '%';
+    });
+
+    // ===== 自定义光标 =====
+    const cursorDot = document.getElementById('cursorDot');
+    const cursorRing = document.getElementById('cursorRing');
+
+    let mouseX = 0, mouseY = 0;
+    let ringX = 0, ringY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursorDot.style.left = mouseX + 'px';
+      cursorDot.style.top = mouseY + 'px';
+    });
+
+    function animateRing() {
+      ringX += (mouseX - ringX) * 0.15;
+      ringY += (mouseY - ringY) * 0.15;
+      cursorRing.style.left = ringX + 'px';
+      cursorRing.style.top = ringY + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    const hoverElements = document.querySelectorAll('a, button, .card, input, textarea');
+    hoverElements.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursorRing.classList.add('hover');
+        cursorDot.classList.add('hover');
+      });
+      el.addEventListener('mouseleave', () => {
+        cursorRing.classList.remove('hover');
+        cursorDot.classList.remove('hover');
+      });
+    });
+
+    // ===== 主题切换 =====
+    const themeToggle = document.getElementById('themeToggle');
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    // ===== 滚动动画（Intersection Observer） =====
+    const revealElements = document.querySelectorAll('.reveal, .text-reveal, .line-draw');
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    revealElements.forEach(el => observer.observe(el));
+
+    // 首屏元素立即显示
+    setTimeout(() => {
+      document.querySelectorAll('.page-header .reveal, .page-header .text-reveal, .page-header .line-draw').forEach(el => {
+        el.classList.add('visible');
+      });
+    }, 100);
+  </script>
 
 </body>
 </html>

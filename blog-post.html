@@ -29,7 +29,14 @@
     </script>
 </head>
 <body>
-    <nav>
+    <!-- 滚动进度条 -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- 自定义光标 -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <nav id="navbar">
         <div class="nav-container">
             <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
             <div class="nav-links">
@@ -37,12 +44,25 @@
                 <a href="blog.html" class="active">博客</a>
                 <a href="projects.html">小项目</a>
                 <a href="guestbook.html">留言板</a>
+                <button class="theme-toggle" id="themeToggle" title="切换主题">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <article id="markdown-content" class="fade-in">
+        <article id="markdown-content" class="reveal">
             <p>文章加载中...</p>
         </article>
 
@@ -60,6 +80,92 @@
     </div>
 
     <script>
+        // ===== 导航栏滚动效果 =====
+        const navbar = document.getElementById('navbar');
+        const scrollProgress = document.getElementById('scrollProgress');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            scrollProgress.style.width = scrollPercent + '%';
+        });
+
+        // ===== 自定义光标 =====
+        const cursorDot = document.getElementById('cursorDot');
+        const cursorRing = document.getElementById('cursorRing');
+
+        let mouseX = 0, mouseY = 0;
+        let ringX = 0, ringY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.left = mouseX + 'px';
+            cursorDot.style.top = mouseY + 'px';
+        });
+
+        function animateRing() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            cursorRing.style.left = ringX + 'px';
+            cursorRing.style.top = ringY + 'px';
+            requestAnimationFrame(animateRing);
+        }
+        animateRing();
+
+        function setupCursorHovers() {
+            const hoverElements = document.querySelectorAll('a, button, .card, input, textarea');
+            hoverElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursorRing.classList.add('hover');
+                    cursorDot.classList.add('hover');
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursorRing.classList.remove('hover');
+                    cursorDot.classList.remove('hover');
+                });
+            });
+        }
+        setupCursorHovers();
+
+        // ===== 主题切换 =====
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // ===== 滚动动画 =====
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        revealElements.forEach(el => observer.observe(el));
+
         // 获取 URL 参数中的文件路径，例如 ?file=posts/how-to-build-this-site.md
         const urlParams = new URLSearchParams(window.location.search);
         const fileName = urlParams.get('file');
@@ -97,6 +203,9 @@
                             } catch (e) { /* ignore */ }
                         }
                     }
+
+                    // 重新设置光标 hover 监听（因为新内容添加了链接）
+                    setupCursorHovers();
                 })
                 .catch(error => {
                     document.getElementById('markdown-content').innerHTML =

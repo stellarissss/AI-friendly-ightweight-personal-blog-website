@@ -28,7 +28,14 @@
     </script>
 </head>
 <body>
-    <nav>
+    <!-- 滚动进度条 -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- 自定义光标 -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <nav id="navbar">
         <div class="nav-container">
             <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
             <div class="nav-links">
@@ -36,18 +43,33 @@
                 <a href="blog.html">博客</a>
                 <a href="projects.html">小项目</a>
                 <a href="guestbook.html" class="active">留言板</a>
+                <button class="theme-toggle" id="themeToggle" title="切换主题">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <header class="page-header fade-in">
+        <header class="page-header reveal">
             <div class="eyebrow">GUESTBOOK / LEAVE A MESSAGE</div>
-            <h1>留言板</h1>
+            <h1 class="text-reveal">
+                <span class="inner">留言板</span>
+            </h1>
             <p class="subtitle">说点什么吧...?</p>
         </header>
 
-        <main class="fade-in d1">
+        <main class="reveal d1">
             <!-- 提交留言表单 -->
             <div class="gb-form">
                 <div id="reply-indicator">
@@ -75,6 +97,98 @@
     </div>
 
     <script>
+        // ===== 导航栏滚动效果 =====
+        const navbar = document.getElementById('navbar');
+        const scrollProgress = document.getElementById('scrollProgress');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            scrollProgress.style.width = scrollPercent + '%';
+        });
+
+        // ===== 自定义光标 =====
+        const cursorDot = document.getElementById('cursorDot');
+        const cursorRing = document.getElementById('cursorRing');
+
+        let mouseX = 0, mouseY = 0;
+        let ringX = 0, ringY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.left = mouseX + 'px';
+            cursorDot.style.top = mouseY + 'px';
+        });
+
+        function animateRing() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            cursorRing.style.left = ringX + 'px';
+            cursorRing.style.top = ringY + 'px';
+            requestAnimationFrame(animateRing);
+        }
+        animateRing();
+
+        function setupCursorHovers() {
+            const hoverElements = document.querySelectorAll('a, button, .card, input, textarea, .comment-box');
+            hoverElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursorRing.classList.add('hover');
+                    cursorDot.classList.add('hover');
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursorRing.classList.remove('hover');
+                    cursorDot.classList.remove('hover');
+                });
+            });
+        }
+        setupCursorHovers();
+
+        // ===== 主题切换 =====
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // ===== 滚动动画 =====
+        const revealElements = document.querySelectorAll('.reveal, .text-reveal');
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        revealElements.forEach(el => observer.observe(el));
+
+        setTimeout(() => {
+            document.querySelectorAll('.page-header .reveal, .page-header .text-reveal').forEach(el => {
+                el.classList.add('visible');
+            });
+        }, 100);
+
         // ⚠️ 把这里换成你服务器的真实 IP 和端口！
         const API_BASE = "http://119.45.14.187:8000/api/comments";
 
@@ -112,6 +226,8 @@
 
                 document.getElementById('comments-list').innerHTML =
                     html || '<p class="status-msg">还没有留言，快来抢沙发！</p>';
+
+                setupCursorHovers();
 
             } catch (error) {
                 console.error('加载留言失败:', error);
@@ -197,6 +313,12 @@
                 let currentLikes = parseInt(btn.textContent.trim().split(' ')[1]) || 0;
                 btn.textContent = `赞 ${currentLikes + 1}`;
                 btn.disabled = true;
+
+                // 简单的点赞动画效果
+                btn.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    btn.style.transform = 'scale(1)';
+                }, 200);
             } catch (error) {
                 console.error('点赞失败:', error);
                 alert('点赞失败，请检查网络连接');
