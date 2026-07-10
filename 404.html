@@ -233,7 +233,7 @@
     <a href="/blog.html" class="btn">博客</a>
     <a href="/guestbook.html" class="btn">留言板</a>
   </div>
-  <div class="hint">提示：试试输入 whoami / ls / sudo / help</div>
+  <div class="hint">提示：试试输入 whoami / about / matrix / date / sudo / help</div>
 </div>
 
 <script>
@@ -285,18 +285,27 @@ const commands = {
     '  home     - 返回首页',
     '  back     - 返回上一页',
     '  blog     - 去博客',
+    '  projects - 去小项目',
+    '  guestbook- 去留言板',
     '  whoami   - 你是谁',
     '  ls       - 列出网站页面',
     '  sudo     - 尝试获取管理员权限（笑）',
     '  hi       - 打个招呼',
+    '  about    - 关于站长',
+    '  date     - 显示当前时间',
+    '  echo     - 回声测试',
+    '  matrix   - 切换矩阵雨强度',
     '  clear    - 清屏',
     '  exit     - 离开'
   ].join('\n'),
   whoami: '你是第 ' + Math.floor(Math.random()*9000+1000) + ' 个迷路到这里的访客。坐标未知，意识在线。',
   ls: 'index.html  blog.html  projects.html\nguestbook.html  posts/  style.css\n\n(你访问的那个文件不在这里。)',
   hi: '你好呀 👋 我是常乐天网站里的一个终端。你迷路了？',
+  about: '站长：常乐天\n学校：太原师院附中 2509班\n爱好：计算机科学 & 地理学\n座右铭：折腾永不止步。',
   sudo: 'permission denied: 你不是常乐天本人 :)',
   exit: '拜拜！正在尝试关闭这个标签页...（其实关不了，你走吧）',
+  projects: '跳转到小项目页面...',
+  guestbook: '跳转到留言板...',
   '': ''
 };
 
@@ -360,6 +369,7 @@ input.addEventListener('focus', () => cursor.style.display = 'block');
 input.addEventListener('blur', () => cursor.style.display = 'none');
 
 // ================= 命令处理 =================
+let matrixIntensity = 0.15;
 input.addEventListener('keydown', async function(e) {
   if (e.key === 'Enter') {
     const cmd = input.value.trim();
@@ -378,8 +388,22 @@ input.addEventListener('keydown', async function(e) {
     } else if (cmd === 'blog') {
       await typeLine('正在前往博客...');
       setTimeout(() => location.href = '/blog.html', 600);
-    } else if (cmd === 'whoami' || cmd === 'ls' || cmd === 'hi' || cmd === 'exit') {
+    } else if (cmd === 'projects') {
+      await typeLine('正在前往小项目...');
+      setTimeout(() => location.href = '/projects.html', 600);
+    } else if (cmd === 'guestbook') {
+      await typeLine('正在前往留言板...');
+      setTimeout(() => location.href = '/guestbook.html', 600);
+    } else if (cmd === 'whoami' || cmd === 'ls' || cmd === 'hi' || cmd === 'exit' || cmd === 'about') {
       await typeLine(commands[cmd]);
+    } else if (cmd === 'date') {
+      await typeLine(new Date().toLocaleString('zh-CN'));
+    } else if (cmd.startsWith('echo ')) {
+      await typeLine(cmd.slice(5));
+    } else if (cmd === 'matrix') {
+      matrixIntensity = matrixIntensity === 0.15 ? 0.4 : 0.15;
+      canvas.style.opacity = matrixIntensity;
+      await typeLine('矩阵雨强度已切换为 ' + (matrixIntensity * 100).toFixed(0) + '%');
     } else if (cmd === 'sudo') {
       // 触发屏幕抖动效果
       document.body.classList.add('glitch-screen');

@@ -29,7 +29,10 @@
     </script>
 </head>
 <body>
-    <nav>
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <nav id="navbar">
         <div class="nav-container">
             <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
             <div class="nav-links">
@@ -60,6 +63,25 @@
     </div>
 
     <script>
+        // Navbar scroll effect + progress
+        const navbar = document.getElementById('navbar');
+        const scrollProgress = document.getElementById('scrollProgress');
+
+        function updateScrollProgress() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            scrollProgress.style.width = progress + '%';
+            if (scrollTop > 20) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        }
+
+        window.addEventListener('scroll', updateScrollProgress, { passive: true });
+        updateScrollProgress();
+
         // 获取 URL 参数中的文件路径，例如 ?file=posts/how-to-build-this-site.md
         const urlParams = new URLSearchParams(window.location.search);
         const fileName = urlParams.get('file');

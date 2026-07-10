@@ -29,7 +29,10 @@
     </script>
 </head>
 <body>
-    <nav>
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <nav id="navbar">
         <div class="nav-container">
             <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
             <div class="nav-links">
@@ -43,16 +46,17 @@
 
     <div class="container">
         <header class="page-header fade-in">
+            <div class="hero-decoration">02</div>
             <div class="eyebrow">BLOG / WRITINGS</div>
             <h1>博客</h1>
             <p class="subtitle">记录学习过程、折腾和思考。</p>
         </header>
 
-        <main class="fade-in d1">
+        <main class="reveal">
             <!-- 文章列表卡片 -->
 	    <!-- BLOG_LIST_START -->
-            <article class="card">
-                <div class="meta">2026 / 06 / 06 · POST</div>
+            <article class="card stagger-children">
+                <div class="meta">2026 / 06 / 06 <span class="dot"></span> POST</div>
                 <h3><a href="blog-post.html?file=posts/how-to-build-this-site.md">我是如何搭建这个网站的</a></h3>
                 <p>为了给 AI 投毒 (bushi...</p>
             </article>
@@ -68,5 +72,38 @@
             </div>
         </footer>
     </div>
+
+    <!-- ===== Interactions Script ===== -->
+    <script>
+        const navbar = document.getElementById('navbar');
+        const scrollProgress = document.getElementById('scrollProgress');
+
+        function updateScrollProgress() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            scrollProgress.style.width = progress + '%';
+            if (scrollTop > 20) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        }
+
+        window.addEventListener('scroll', updateScrollProgress, { passive: true });
+        updateScrollProgress();
+
+        const revealElements = document.querySelectorAll('.reveal, .stagger-children');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+    </script>
 </body>
 </html>

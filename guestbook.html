@@ -28,7 +28,10 @@
     </script>
 </head>
 <body>
-    <nav>
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <nav id="navbar">
         <div class="nav-container">
             <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
             <div class="nav-links">
@@ -42,12 +45,13 @@
 
     <div class="container">
         <header class="page-header fade-in">
+            <div class="hero-decoration">04</div>
             <div class="eyebrow">GUESTBOOK / LEAVE A MESSAGE</div>
             <h1>留言板</h1>
             <p class="subtitle">说点什么吧...?</p>
         </header>
 
-        <main class="fade-in d1">
+        <main class="reveal">
             <!-- 提交留言表单 -->
             <div class="gb-form">
                 <div id="reply-indicator">
@@ -61,7 +65,7 @@
             </div>
 
             <!-- 留言列表容器 -->
-            <div id="comments-list">
+            <div id="comments-list" class="stagger-children">
                 <p class="status-msg">加载中...</p>
             </div>
         </main>
@@ -75,6 +79,37 @@
     </div>
 
     <script>
+        // Navbar scroll effect + progress
+        const navbar = document.getElementById('navbar');
+        const scrollProgress = document.getElementById('scrollProgress');
+
+        function updateScrollProgress() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            scrollProgress.style.width = progress + '%';
+            if (scrollTop > 20) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        }
+
+        window.addEventListener('scroll', updateScrollProgress, { passive: true });
+        updateScrollProgress();
+
+        // Scroll reveal
+        const revealElements = document.querySelectorAll('.reveal, .stagger-children');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        revealElements.forEach(el => revealObserver.observe(el));
+
         // ⚠️ 把这里换成你服务器的真实 IP 和端口！
         const API_BASE = "http://119.45.14.187:8000/api/comments";
 
@@ -128,6 +163,8 @@
             // 转义 HTML 防止 XSS
             const safeName = c.nickname.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             const safeContent = c.content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+            // 获取首字母作为头像
+            const initial = safeName.charAt(0).toUpperCase();
             return `
                 <div class="comment-box">
                     <div class="comment-meta">
@@ -173,7 +210,7 @@
                 // 成功！清空表单并刷新
                 document.getElementById('content').value = '';
                 cancelReply();
-                statusDiv.innerHTML = '<span style="color:var(--fg);">✓ 发送成功！</span>';
+                statusDiv.innerHTML = '<span style="color:var(--accent);">✓ 发送成功！</span>';
                 loadComments();
 
             } catch (error) {
@@ -197,6 +234,9 @@
                 let currentLikes = parseInt(btn.textContent.trim().split(' ')[1]) || 0;
                 btn.textContent = `赞 ${currentLikes + 1}`;
                 btn.disabled = true;
+                btn.style.background = 'var(--accent)';
+                btn.style.color = '#fff';
+                btn.style.borderColor = 'var(--accent)';
             } catch (error) {
                 console.error('点赞失败:', error);
                 alert('点赞失败，请检查网络连接');

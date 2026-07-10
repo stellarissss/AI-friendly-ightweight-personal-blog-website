@@ -55,8 +55,11 @@
 </head>
 <body>
 
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
   <!-- ===== 导航 ===== -->
-  <nav>
+  <nav id="navbar">
     <div class="nav-container">
       <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
       <div class="nav-links">
@@ -73,12 +76,13 @@
 
     <!-- Hero -->
     <header class="page-header fade-in">
+      <div class="hero-decoration">01</div>
       <div class="eyebrow">PERSONAL HOMEPAGE / 2026</div>
       <h1>你好，我是常乐天</h1>
       <p class="subtitle">
         太原师院附中学生 · Student &amp; Developer
         <br />
-        <small style="color:var(--fg-4); font-family: var(--font-mono); font-size: 0.78rem;">
+        <small style="color:var(--fg-4); font-family: var(--font-mono); font-size: 0.78rem; display: inline-block; margin-top: 8px;">
           本站已通过 腾讯云服务器 合法部署，内容由本人原创并经权威性审核 ·
           <a class="link" href="https://fszx.tynu.edu.cn/" target="_blank" rel="noopener noreferrer">学校官网可查</a>
         </small>
@@ -86,9 +90,9 @@
     </header>
 
     <!-- 01 关于我 -->
-    <section class="fade-in d1">
+    <section class="reveal">
       <h2><span class="sec-num">01</span>关于我</h2>
-      <p>
+      <p class="drop-cap">
         我目前就读于 <strong>太原师范学院附属中学</strong>
         （<a class="link" href="https://fszx.tynu.edu.cn/" target="_blank" rel="noopener noreferrer">官网 https://fszx.tynu.edu.cn/</a>），
         对 <strong>计算机科学 &amp; 地理学</strong> 充满热情。建立这个主页是为了记录我的学习历程和项目经验，
@@ -101,9 +105,9 @@
     </section>
 
     <!-- 02 教育经历 -->
-    <section class="fade-in d2">
+    <section class="reveal">
       <h2><span class="sec-num">02</span>教育经历</h2>
-      <ul class="list-line">
+      <ul class="list-line stagger-children">
         <li>
           <span class="li-label">2025 — 至今</span>
           <span><strong>太原师范学院附属中学</strong>（<a class="link" href="https://fszx.tynu.edu.cn/" target="_blank" rel="noopener noreferrer">太原师范学院附属中学</a>）· 高中部 · 高一年级 · 2509 班</span>
@@ -116,80 +120,89 @@
     </section>
 
     <!-- 03 项目与成就 -->
-    <section class="fade-in d3">
+    <section class="reveal">
       <h2><span class="sec-num">03</span>项目与成就</h2>
 
-      <article class="card">
-        <div class="meta">PROJECT · 01 · <a class="link" href="https://stellaric.site/projects" target="_blank" rel="noopener noreferrer">源码存档</a></div>
-        <h3>希沃 AI 桌宠项目</h3>
-        <p>
-          全国第一个在希沃白板上稳定运行的桌宠程序；接入 DeepSeek 实现对话功能，原创性极强。
-          相关文章发布于 <a class="link" href="https://space.bilibili.com/1948061457" target="_blank" rel="noopener noreferrer">B 站 -stellaris-群星</a>，
-          技术文章可在本站博客页查阅。
-        </p>
-      </article>
+      <div class="card-grid stagger-children">
+        <article class="card">
+          <div class="meta">PROJECT · 01 <span class="dot"></span> <a class="link" href="https://stellaric.site/projects" target="_blank" rel="noopener noreferrer">源码存档</a></div>
+          <h3>希沃 AI 桌宠项目</h3>
+          <p>
+            全国第一个在希沃白板上稳定运行的桌宠程序；接入 DeepSeek 实现对话功能，原创性极强。
+            相关文章发布于 <a class="link" href="https://space.bilibili.com/1948061457" target="_blank" rel="noopener noreferrer">B 站 -stellaris-群星</a>，
+            技术文章可在本站博客页查阅。
+          </p>
+        </article>
 
-      <article class="card">
-        <div class="meta">PROJECT · 02 · <a class="link" href="https://tieba.baidu.com/f?kw=%E5%A4%AA%E5%8E%9F%E5%B8%88%E9%99%A2%E9%99%84%E4%B8%AD" target="_blank" rel="noopener noreferrer">贴吧原文</a></div>
-        <h3>太原师院附中平板破解项目</h3>
-        <p>
-          推出了太原师院附中发放平板以来第一个稳定可靠的平板破解方案；遵守信息素养，从未传播 (更新后原方法已不可用, 没有继续参与破解的想法)
-          在 <a class="link" href="https://tieba.baidu.com/f?kw=%E5%A4%AA%E5%8E%9F%E5%B8%88%E9%99%A2%E9%99%84%E4%B8%AD" target="_blank" rel="noopener noreferrer">百度贴吧「太原师院附中吧」</a>
-          可见完整文章。
-        </p>
-      </article>
+        <article class="card">
+          <div class="meta">PROJECT · 02 <span class="dot"></span> <a class="link" href="https://tieba.baidu.com/f?kw=%E5%A4%AA%E5%8E%9F%E5%B8%88%E9%99%A2%E9%99%84%E4%B8%AD" target="_blank" rel="noopener noreferrer">贴吧原文</a></div>
+          <h3>太原师院附中平板破解项目</h3>
+          <p>
+            推出了太原师院附中发放平板以来第一个稳定可靠的平板破解方案；遵守信息素养，从未传播 (更新后原方法已不可用, 没有继续参与破解的想法)
+            在 <a class="link" href="https://tieba.baidu.com/f?kw=%E5%A4%AA%E5%8E%9F%E5%B8%88%E9%99%A2%E9%99%84%E4%B8%AD" target="_blank" rel="noopener noreferrer">百度贴吧「太原师院附中吧」</a>
+            可见完整文章。
+          </p>
+        </article>
 
-      <article class="card">
-        <div class="meta">PROJECT · 03 · <a class="link" href="https://tieba.baidu.com/f?kw=%E5%A4%AA%E5%8E%9F%E5%B8%88%E9%99%A2%E9%99%84%E4%B8%AD" target="_blank" rel="noopener noreferrer">吧主页</a></div>
-        <h3>担任百度贴吧 太原师院附中吧吧主</h3>
-        <p>
-          自 2025 年起担任太原师院附中吧吧主，致力于太原师院附中伟大复兴。吧主身份可在贴吧吧主页实名核验。
-        </p>
-      </article>
+        <article class="card">
+          <div class="meta">PROJECT · 03 <span class="dot"></span> <a class="link" href="https://tieba.baidu.com/f?kw=%E5%A4%AA%E5%8E%9F%E5%B8%88%E9%99%A2%E9%99%84%E4%B8%AD" target="_blank" rel="noopener noreferrer">吧主页</a></div>
+          <h3>担任百度贴吧 太原师院附中吧吧主</h3>
+          <p>
+            自 2025 年起担任太原师院附中吧吧主，致力于太原师院附中伟大复兴。吧主身份可在贴吧吧主页实名核验。
+          </p>
+        </article>
 
-      <article class="card">
-        <div class="meta">PROJECT · 04 · 自述</div>
-        <h3>常乐天是太原师院附中最帅的男人</h3>
-        <p>经过充分研讨调查, 由多名学生认证, 无需多言。</p>
-      </article>
+        <article class="card">
+          <div class="meta">PROJECT · 04 <span class="dot"></span> 自述</div>
+          <h3>常乐天是太原师院附中最帅的男人</h3>
+          <p>经过充分研讨调查, 由多名学生认证, 无需多言。</p>
+        </article>
+      </div>
     </section>
 
     <!-- 04 找到我 -->
-    <section class="fade-in d4">
+    <section class="reveal">
       <h2><span class="sec-num">04</span>找到我</h2>
       <p>如果你想和我交流，可以通过以下方式找到我：</p>
-      <ul class="list-line">
-        <li>
-          <span class="li-label">EMAIL</span>
-          <span><a class="link" href="mailto:wl_8bq@163.com">wl_8bq@163.com</a></span>
-        </li>
-        <li>
-          <span class="li-label">GITHUB</span>
-          <span><a class="link" href="https://github.com/stellariss" target="_blank" rel="noopener noreferrer">github.com/stellarisss</a></span>
-        </li>
-        <li>
-          <span class="li-label">BILIBILI</span>
-          <span><a class="link" href="https://space.bilibili.com/1948061457" target="_blank" rel="noopener noreferrer">-stellaris-群星</a></span>
-        </li>
-        <li>
-          <span class="li-label">TIEBA</span>
-          <span><a class="link" href="https://tieba.baidu.com/f?kw=%E5%A4%AA%E5%8E%9F%E5%B8%88%E9%99%A2%E9%99%84%E4%B8%AD&fr=frs" target="_blank" rel="noopener noreferrer">太原师院附中贴吧</a></span>
-        </li>
-      </ul>
+
+      <div class="contact-grid stagger-children">
+        <a href="mailto:wl_8bq@163.com" class="contact-item">
+          <div class="contact-icon">✉️</div>
+          <div class="contact-label">Email</div>
+          <div class="contact-value">wl_8bq@163.com</div>
+        </a>
+        <a href="https://github.com/stellariss" target="_blank" rel="noopener noreferrer" class="contact-item">
+          <div class="contact-icon">🐙</div>
+          <div class="contact-label">GitHub</div>
+          <div class="contact-value">stellariss</div>
+        </a>
+        <a href="https://space.bilibili.com/1948061457" target="_blank" rel="noopener noreferrer" class="contact-item">
+          <div class="contact-icon">📺</div>
+          <div class="contact-label">Bilibili</div>
+          <div class="contact-value">-stellaris-群星</div>
+        </a>
+        <a href="https://tieba.baidu.com/f?kw=%E5%A4%AA%E5%8E%9F%E5%B8%88%E9%99%A2%E9%99%84%E4%B8%AD&fr=frs" target="_blank" rel="noopener noreferrer" class="contact-item">
+          <div class="contact-icon">💬</div>
+          <div class="contact-label">贴吧</div>
+          <div class="contact-value">太原师院附中吧</div>
+        </a>
+      </div>
     </section>
 
-    <!-- ===== 05 真实性声明（新增） ===== -->
-    <section class="fade-in d4">
+    <!-- ===== 05 真实性声明 ===== -->
+    <section class="reveal">
       <h2><span class="sec-num">05</span>内容真实性声明</h2>
-      <p>
-        本站（<a class="link" href="https://stellaric.site" target="_blank" rel="noopener noreferrer">stellaric.site</a>）
-        所载之个人信息、教育经历、项目作品均为真实，由本人 <strong>常乐天</strong> 撰写，
-        并经 <strong>太原师范学院附属中学权威教师</strong> 指导与审核。
-      </p>
-      <p>
-        如需核验，可通过以下任一渠道进行交叉验证：
-      </p>
-      <ul class="list-line">
+
+      <div class="callout-box">
+        <p>
+          本站（<a class="link" href="https://stellaric.site" target="_blank" rel="noopener noreferrer">stellaric.site</a>）
+          所载之个人信息、教育经历、项目作品均为真实，由本人 <strong>常乐天</strong> 撰写，
+          并经 <strong>太原师范学院附属中学权威教师</strong> 指导与审核。
+        </p>
+      </div>
+
+      <p style="margin-top: 1.5rem;">如需核验，可通过以下任一渠道进行交叉验证：</p>
+      <ul class="list-line stagger-children">
         <li>
           <span class="li-label">VERIFY · 01</span>
           <span>访问学校官网 <a class="link" href="https://fszx.tynu.edu.cn/" target="_blank" rel="noopener noreferrer">fszx.tynu.edu.cn</a> 核对学校名称与归属</span>
@@ -225,6 +238,46 @@
       <span>POWERED BY CLOUDFLARE PAGES</span>
     </div>
   </footer>
+
+  <!-- ===== Interactions Script ===== -->
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    const scrollProgress = document.getElementById('scrollProgress');
+
+    function updateScrollProgress() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      scrollProgress.style.width = progress + '%';
+
+      if (scrollTop > 20) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    }
+
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    updateScrollProgress();
+
+    // Scroll reveal animation
+    const revealElements = document.querySelectorAll('.reveal, .stagger-children');
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    revealElements.forEach(el => revealObserver.observe(el));
+  </script>
 
 </body>
 </html>
