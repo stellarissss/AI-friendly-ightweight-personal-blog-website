@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小项目 | 常乐天</title>
+    <meta name="description" content="常乐天的一些小项目集合。">
+    <meta name="author" content="常乐天">
+    <meta property="og:title" content="小项目 | 常乐天">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="zh_CN">
+    <link rel="canonical" href="https://stellaric.site/projects.html">
+    <link rel="stylesheet" href="style.css?v=20260621">
+    <!-- 引入 Markdown 解析库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* 编辑器专属样式 */
+        .md-editor-wrapper {
+            margin-top: 2rem;
+        }
+        
+        /* 工具栏样式 */
+        .md-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid var(--line);
+            background: var(--bg-soft);
+        }
+        .md-toolbar button {
+            background: var(--bg);
+            color: var(--fg);
+            border: 1px solid var(--line-2);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            min-width: 40px;
+            transition: all var(--t);
+        }
+        .md-toolbar button:hover {
+            background: var(--fg);
+            color: var(--bg);
+            border-color: var(--fg);
+        }
+        
+        .md-action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .md-action-buttons button {
+            background: var(--fg);
+            color: var(--bg);
+            border: 1px solid var(--fg);
+            padding: 0.5rem 1.2rem;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            transition: all var(--t);
+        }
+        .md-action-buttons button:hover {
+            background: var(--bg);
+            color: var(--fg);
+        }
+
+        .md-editor-container {
+            display: flex;
+            gap: 0;
+            height: 500px;
+            border: 1px solid var(--line);
+        }
+        .md-editor-input {
+            width: 50%;
+            padding: 1rem;
+            border: none;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            background: var(--bg);
+            color: var(--fg);
+            resize: none;
+            outline: none;
+            border-right: 1px solid var(--line);
+        }
+        .md-editor-preview {
+            width: 50%;
+            padding: 1rem 1.5rem;
+            overflow-y: auto;
+            background: var(--bg-soft);
+        }
+        /* 复用 blog-post.html 的 markdown 排版样式 */
+        .md-editor-preview h1, .md-editor-preview h2, .md-editor-preview h3,
+        .md-editor-preview p, .md-editor-preview ul, .md-editor-preview ol,
+        .md-editor-preview blockquote, .md-editor-preview code, .md-editor-preview pre {
+            margin-bottom: 1rem;
+        }
+        .md-editor-preview h1 { font-size: 1.5rem; border-bottom: 1px solid var(--line); padding-bottom: 0.5rem;}
+        .md-editor-preview h2 { font-size: 1.2rem; }
+        .md-editor-preview a { color: #000; text-decoration: underline; }
+        .md-editor-preview code { background: #eee; padding: 2px 4px; border-radius: 3px; font-family: var(--font-mono);}
+
+        @media (max-width: 640px) {
+            .md-editor-container { flex-direction: column; height: auto; }
+            .md-editor-input, .md-editor-preview { width: 100%; height: 300px; border-right: none; border-bottom: 1px solid var(--line);}
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="blog.html">博客</a>
+                <a href="projects.html" class="active">小项目</a>
+                <a href="guestbook.html">留言板</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <header class="page-header fade-in">
+            <div class="eyebrow">PROJECTS / WORKS</div>
+            <h1>一些小项目...?</h1>
+            <p class="subtitle">这里将收录我折腾过的各种小东西。</p>
+        </header>
+        
+        <main class="fade-in d1">
+            
+            <section>
+                
+                    <h2>个人云盘</h2>
+                    <div class="section-label">PERSONAL CLOUD DRIVE</div> 
+                    <p style="color:var(--fg-3); margin-bottom:2rem;">这里放一些我分享的文件，可直接下载。</p>
+                <div id="cloud-files">
+                    <p class="status-msg">加载中...</p>
+                </div>
+            </section>
+            
+            
+            <section class="md-editor-wrapper">
+                <h2>在线 Markdown 编辑器</h2>
+                <p>用于本人快速撰写博客文章。</p>
+                
+                <!-- 工具栏：点击插入语法 -->
+                <div class="md-toolbar">
+                    <button onclick="formatText('**')" title="加粗"><strong>B</strong></button>
+                    <button onclick="formatText('*')" title="斜体"><em>I</em></button>
+                    <button onclick="formatText('~~')" title="删除线"><s>S</s></button>
+                    <button onclick="insertLinePrefix('# ')" title="一级标题">H1</button>
+                    <button onclick="insertLinePrefix('## ')" title="二级标题">H2</button>
+                    <button onclick="insertLinePrefix('> ')" title="引用">❝</button>
+                    <button onclick="insertLinePrefix('- ')" title="无序列表">• 列表</button>
+                    <button onclick="formatLink()" title="链接">🔗 链接</button>
+                </div>
+
+                <div class="md-action-buttons">
+                    <button onclick="copyMarkdown()">复制文本</button>
+                    <button onclick="downloadMarkdown()">下载 .md 文件</button>
+                </div>
+
+                <div class="md-editor-container">
+                    <textarea class="md-editor-input" id="md-input" placeholder="# 在这里输入 Markdown 内容...&#10;选中文本后点击上方按钮即可快速排版！"></textarea>
+                    <div class="md-editor-preview" id="md-preview"></div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer>
+            <div class="foot-line">
+                <span>© 2024 SYFZ 2509 常乐天</span>
+                <span>POWERED BY CLOUDFLARE PAGES</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const input = document.getElementById('md-input');
+        const preview = document.getElementById('md-preview');
+
+        // 实时预览功能
+        function renderMarkdown() {
+            preview.innerHTML = marked.parse(input.value);
+        }
+        input.addEventListener('input', renderMarkdown);
+        renderMarkdown();
+
+        // 1. 包裹选中文本 (加粗、斜体、删除线)
+        function formatText(wrap) {
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            const selectedText = input.value.substring(start, end) || "文本";
+            const before = input.value.substring(0, start);
+            const after = input.value.substring(end);
+            
+            const newText = wrap + selectedText + wrap;
+            input.value = before + newText + after;
+            
+            // 重新选中刚刚包裹的文本
+            input.focus();
+            input.selectionStart = start;
+            input.selectionEnd = start + newText.length;
+            renderMarkdown();
+        }
+
+        // 2. 行首插入前缀 (标题、引用、列表)
+        function insertLinePrefix(prefix) {
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            const selectedText = input.value.substring(start, end);
+            const before = input.value.substring(0, start);
+            const after = input.value.substring(end);
+            
+            const newText = prefix + selectedText;
+            input.value = before + newText + after;
+            
+            input.focus();
+            input.selectionStart = start;
+            input.selectionEnd = start + newText.length;
+            renderMarkdown();
+        }
+
+        // 3. 插入链接
+        function formatLink() {
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            const selectedText = input.value.substring(start, end) || "链接文本";
+            const before = input.value.substring(0, start);
+            const after = input.value.substring(end);
+            
+            const newText = `[${selectedText}](https://)`;
+            input.value = before + newText + after;
+            
+            input.focus();
+            // 将光标定位到括号内，方便直接填链接
+            input.selectionStart = start + newText.length - 1;
+            input.selectionEnd = start + newText.length - 1;
+            renderMarkdown();
+        }
+
+        // 复制功能
+        function copyMarkdown() {
+            input.select();
+            document.execCommand('copy');
+            alert('Markdown 内容已复制到剪贴板！');
+        }
+
+        // 下载功能
+        function downloadMarkdown() {
+            const text = input.value;
+            const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'new-post.md';
+            link.click();
+        }
+
+    function formatSize(b){
+    if(b < 1024) return b + ' B';
+    if(b < 1048576) return (b/1024).toFixed(1) + ' KB';
+    if(b < 1073741824) return (b/1048576).toFixed(1) + ' MB';
+    return (b/1073741824).toFixed(2) + ' GB';
+}
+function formatDate(ts){
+    const d = new Date(ts * 1000);
+    return d.getFullYear() + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + String(d.getDate()).padStart(2,'0');
+}
+fetch('/list.php')
+    .then(r => r.json())
+    .then(files => {
+        const box = document.getElementById('cloud-files');
+        if(!files.length){
+            box.innerHTML = '<p class="status-msg">暂无文件</p>';
+            return;
+        }
+        box.innerHTML = files.map(f => `
+            <article class="card">
+                <div class="meta">${formatDate(f.time)} ·${formatSize(f.size)}</div>
+            	<h3><a href="/download.php?f=${encodeURIComponent(f.name)}" download>${f.name}</a></h3>
+            	<p>点击下载</p>
+            </article>
+        `).join('');
+    })
+    .catch(() => {
+        document.getElementById('cloud-files').innerHTML = '<p class="error-msg">加载失败，请稍后重试</p>';
+    });
+    </script>
+</body>
+</html>

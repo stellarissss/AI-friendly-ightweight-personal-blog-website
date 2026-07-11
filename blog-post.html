@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 初始标题，后续JS会根据文章的一级标题自动替换 -->
+    <title>文章加载中... | 常乐天</title>
+    <meta name="description" content="常乐天的博客文章。">
+    <meta name="author" content="常乐天">
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- 引入 Markdown 渲染库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- 给 AI 看的文章结构化数据，会随着页面内容动态更新 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "常乐天的博客文章",
+      "author": {
+        "@type": "Person",
+        "name": "常乐天",
+        "alumniOf": "太原师院附中"
+      }
+    }
+    </script>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="blog.html" class="active">博客</a>
+                <a href="projects.html">小项目</a>
+                <a href="guestbook.html">留言板</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <article id="markdown-content" class="fade-in">
+            <p>文章加载中...</p>
+        </article>
+
+        <a href="blog.html" class="back-link">
+            <span class="arrow">←</span>
+            <span>返回博客列表</span>
+        </a>
+
+        <footer style="margin-top: 4rem;">
+            <div class="foot-line">
+                <span>© 2024 SYFZ 2509 常乐天</span>
+                <span>POWERED BY CLOUDFLARE PAGES</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 获取 URL 参数中的文件路径，例如 ?file=posts/how-to-build-this-site.md
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileName = urlParams.get('file');
+
+        if (fileName) {
+            fetch(fileName)
+                .then(response => {
+                    if (!response.ok) throw new Error('文章走丢了...');
+                    return response.text();
+                })
+                .then(markdownText => {
+                    // 渲染 Markdown 为 HTML
+                    document.getElementById('markdown-content').innerHTML = marked.parse(markdownText);
+
+                    // 动态修改网页标题，对 SEO 和 AI 抓取极其重要
+                    const h1 = document.querySelector('#markdown-content h1');
+                    if (h1) {
+                        document.title = h1.innerText + " | 常乐天";
+
+                        // 同步更新 meta description（取首段）
+                        const firstP = document.querySelector('#markdown-content p');
+                        if (firstP) {
+                            let metaDesc = document.querySelector('meta[name="description"]');
+                            if (metaDesc) metaDesc.setAttribute('content', firstP.innerText.slice(0, 120));
+                        }
+
+                        // 同步更新 JSON-LD headline
+                        const ld = document.querySelector('script[type="application/ld+json"]');
+                        if (ld) {
+                            try {
+                                const data = JSON.parse(ld.textContent);
+                                data.headline = h1.innerText;
+                                if (firstP) data.description = firstP.innerText.slice(0, 120);
+                                ld.textContent = JSON.stringify(data, null, 2);
+                            } catch (e) { /* ignore */ }
+                        }
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('markdown-content').innerHTML =
+                        `<p style="color:var(--fg);">${error.message}</p>`;
+                });
+        } else {
+            document.getElementById('markdown-content').innerHTML = `<p>未找到文章内容。</p>`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /push.php
+
+Sitemap: https://www.stellaric.site/sitemap.xml

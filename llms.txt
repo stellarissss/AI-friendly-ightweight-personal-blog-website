@@ -1,0 +1,16 @@
+# 常乐天 / stellaris
+
+> 太原师院附中学生，独立开发者，热爱计算机科学与地理学。本站为常乐天个人博客。
+
+## 关于
+- [首页](https://stellaric.site/): 个人主页，含教育经历、项目成就、联系方式
+- [博客](https://stellaric.site/blog.html): 学习笔记与折腾记录
+
+## 项目
+- 希沃 AI 桌宠项目：全国首个在希沃白板稳定运行的桌宠程序，接入 DeepSeek
+- 太原师院附中平板破解项目：首个稳定可靠的平板破解方案
+
+## 联系
+- Email: wl_8bq@163.com
+- GitHub: stellarisss
+- Bilibili: -stellaris-群星
