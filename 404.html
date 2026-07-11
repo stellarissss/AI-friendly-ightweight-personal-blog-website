@@ -4,33 +4,190 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>404 - stellaric.site</title>
+<link rel="stylesheet" href="style.css">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: #0a0a0a;
-    color: #fafafa;
-    font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     padding: 40px 24px;
     overflow-x: hidden;
-    position: relative;
   }
 
-  /* Matrix 背景画布 */
-  #matrix-canvas {
-    position: fixed;
+  .terminal-window {
+    max-width: 720px;
+    width: 100%;
+    margin: auto;
+  }
+
+  .title {
+    font-size: clamp(3rem, 12vw, 6rem);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    margin-bottom: 8px;
+    position: relative;
+    color: var(--fg);
+    display: inline-block;
+  }
+  .title::before,
+  .title::after {
+    content: attr(data-text);
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
-    opacity: 0.15;
-    pointer-events: none;
+  }
+  .title::before {
+    color: var(--magenta);
+    animation: glitch-1 3s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+    transform: translate(-2px, 0);
+    opacity: 0.8;
+  }
+  .title::after {
+    color: var(--cyan);
+    animation: glitch-2 2.5s infinite;
+    clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+    transform: translate(2px, 0);
+    opacity: 0.8;
   }
 
-  /* 全局抖动效果 */
+  .subtitle {
+    color: var(--fg-4);
+    font-size: 0.85rem;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 14px;
+  }
+
+  .output {
+    color: var(--fg-2);
+    font-size: 0.85rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 180px;
+  }
+  .output .line {
+    margin-bottom: 4px;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+  }
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  .output .accent { color: var(--fg); }
+  .output .dim { color: var(--fg-4); }
+  .output .cyan { color: var(--cyan); }
+  .output .magenta { color: var(--magenta); }
+
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: var(--fg);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .input-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+
+  .prompt {
+    color: var(--fg);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .prompt .user { color: var(--green); }
+  .prompt .at { color: var(--fg-4); }
+  .prompt .host { color: var(--fg-2); }
+  .prompt .path { color: var(--cyan); }
+
+  .input-container {
+    position: relative;
+    flex: 1;
+    height: 20px;
+  }
+
+  #cmd-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--fg);
+    font-family: inherit;
+    font-size: 0.85rem;
+    caret-color: transparent;
+    z-index: 2;
+  }
+
+  #measure-span {
+    position: absolute;
+    visibility: hidden;
+    white-space: pre;
+    font-size: 0.85rem;
+  }
+
+  .custom-cursor {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 16px;
+    background: var(--cyan);
+    animation: blink 1s step-end infinite;
+    pointer-events: none;
+    transition: left 0.05s ease-out;
+    z-index: 1;
+    box-shadow: 0 0 8px var(--cyan);
+  }
+
+  .btns {
+    display: flex;
+    gap: 12px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1px solid var(--line-2);
+    color: var(--fg);
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all var(--t);
+    text-decoration: none;
+    background: transparent;
+    border-radius: 4px;
+  }
+
+  .btn:hover {
+    background: var(--cyan);
+    color: var(--bg);
+    border-color: var(--cyan);
+    box-shadow: 0 0 15px rgba(0, 255, 249, 0.3);
+  }
+
+  .hint {
+    margin-top: 16px;
+    color: var(--fg-4);
+    font-size: 0.72rem;
+  }
+
   .glitch-screen {
     animation: glitch-screen 0.4s cubic-bezier(.36,.07,.19,.97) both;
   }
@@ -41,199 +198,48 @@
     40%, 60% { transform: translate3d(8px, 0, 0); }
   }
 
-  .terminal {
-    max-width: 720px;
-    width: 100%;
-    margin: auto;
-    background: rgba(10, 10, 10, 0.8);
-    backdrop-filter: blur(2px);
-    border: 1px solid #1a1a1a;
-    padding: 32px;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8);
-  }
-  
-  .title {
-    font-size: clamp(3rem, 12vw, 6rem);
-    font-weight: 700;
-    letter-spacing: -0.05em;
-    line-height: 1;
-    margin-bottom: 8px;
-    position: relative;
-    color: #fafafa;
-    animation: glitch 3s infinite;
-  }
-  @keyframes glitch {
-    0%, 90%, 100% { transform: none; text-shadow: none; }
-    92% { transform: translateX(-2px); text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9; }
-    94% { transform: translateX(2px); text-shadow: -2px 0 #ff00c1, 2px 0 #00fff9; }
-    96% { transform: none; text-shadow: none; }
-  }
-  
-  .subtitle {
-    color: #737373;
-    font-size: 0.9rem;
-    margin-bottom: 32px;
-    border-bottom: 1px solid #262626;
-    padding-bottom: 16px;
-  }
-  
-  .output {
-    color: #a3a3a3;
-    font-size: 0.88rem;
-    line-height: 1.8;
-    margin-bottom: 24px;
-    white-space: pre-wrap;
-    word-break: break-word;
-    min-height: 180px;
-  }
-  .output .line { 
-    margin-bottom: 4px; 
-    opacity: 0;
-    animation: fadeIn 0.3s forwards;
-  }
-  @keyframes fadeIn { to { opacity: 1; } }
-  
-  .output .accent { color: #fafafa; }
-  .output .dim { color: #525252; }
-  
-  .cursor {
-    display: inline-block;
-    width: 8px;
-    height: 16px;
-    background: #fafafa;
-    vertical-align: middle;
-    animation: blink 1s step-end infinite;
-  }
-  @keyframes blink { 50% { opacity: 0; } }
-  
-  .input-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-top: 1px solid #262626;
-    padding-top: 16px;
-  }
-  
-  .prompt {
-    color: #fafafa;
-    font-size: 0.88rem;
-    flex-shrink: 0;
-  }
-  .prompt .user { color: #fafafa; }
-  .prompt .at { color: #525252; }
-  .prompt .host { color: #a3a3a3; }
-  .prompt .path { color: #525252; }
-  
-  .input-container {
-    position: relative;
-    flex: 1;
-    height: 20px;
-  }
-  
-  #cmd-input {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #fafafa; /* 这里改回白色，让打出的字可见 */
-    font-family: inherit;
-    font-size: 0.88rem;
-    caret-color: transparent; /* 这行保留，用来隐藏系统自带的光标 */
-    z-index: 2;
-  }
-  
-  #measure-span {
-    position: absolute;
-    visibility: hidden;
-    white-space: pre;
-    font-size: 0.88rem;
-  }
-  
-  .custom-cursor {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 8px;
-    height: 16px;
-    background: #fafafa;
-    animation: blink 1s step-end infinite;
-    pointer-events: none;
-    transition: left 0.05s ease-out;
-    z-index: 1;
-  }
-  
-  .btns {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-    flex-wrap: wrap;
-  }
-  
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    border: 1px solid #404040;
-    color: #fafafa;
-    font-family: inherit;
-    font-size: 0.82rem;
-    cursor: pointer;
-    transition: all 220ms;
-    text-decoration: none;
-    background: transparent;
-  }
-  
-  .btn:hover {
-    background: #fafafa;
-    color: #0a0a0a;
-    border-color: #fafafa;
-    box-shadow: 2px 2px 0px rgba(255,255,255,0.2);
-  }
-  
-  .hint {
-    margin-top: 16px;
-    color: #525252;
-    font-size: 0.76rem;
-  }
-  
   @media (max-width: 640px) {
     body { padding: 24px 16px; }
-    .terminal { padding: 20px; }
+    .terminal-body { padding: 1.25rem; }
     .title { font-size: 3.5rem; }
   }
 </style>
 </head>
-<body>
-<canvas id="matrix-canvas"></canvas>
+<body class="scanlines">
+<canvas id="particle-canvas"></canvas>
 
-<div class="terminal">
-  <div class="title">404</div>
-  <div class="subtitle">PAGE_NOT_FOUND // 这个页面不存在或已被移除</div>
-
-  <div class="output" id="output">
-    <!-- 初始内容将由JS动态生成以实现打字机效果 -->
+<div class="terminal-window">
+  <div class="terminal-header">
+    <span class="terminal-dot red"></span>
+    <span class="terminal-dot yellow"></span>
+    <span class="terminal-dot green"></span>
+    <span class="terminal-title">stellaris-shell — 404</span>
   </div>
+  <div class="terminal-body">
+    <div class="title" data-text="404">404</div>
+    <div class="subtitle">PAGE_NOT_FOUND // 这个页面不存在或已被移除</div>
 
-  <div class="input-line">
-    <span class="prompt">
-      <span class="user">visitor</span><span class="at">@</span><span class="host">stellaric</span>:<span class="path">~</span>$
-    </span>
-    <div class="input-container">
-      <input type="text" id="cmd-input" autocomplete="off" spellcheck="false" autofocus>
-      <span id="measure-span"></span>
-      <span class="custom-cursor" id="custom-cursor"></span>
+    <div class="output" id="output">
     </div>
-  </div>
 
-  <div class="btns">
-    <a href="/" class="btn">← 返回首页</a>
-    <a href="/blog.html" class="btn">博客</a>
-    <a href="/guestbook.html" class="btn">留言板</a>
+    <div class="input-line">
+      <span class="prompt">
+        <span class="user">visitor</span><span class="at">@</span><span class="host">stellaric</span>:<span class="path">~</span>$
+      </span>
+      <div class="input-container">
+        <input type="text" id="cmd-input" autocomplete="off" spellcheck="false" autofocus>
+        <span id="measure-span"></span>
+        <span class="custom-cursor" id="custom-cursor"></span>
+      </div>
+    </div>
+
+    <div class="btns">
+      <a href="/" class="btn">← 返回首页</a>
+      <a href="/blog.html" class="btn">博客</a>
+      <a href="/guestbook.html" class="btn">留言板</a>
+    </div>
+    <div class="hint">提示：试试输入 whoami / ls / sudo / help</div>
   </div>
-  <div class="hint">提示：试试输入 whoami / ls / sudo / help</div>
 </div>
 
 <script>
@@ -242,42 +248,6 @@ const output = document.getElementById('output');
 const cursor = document.getElementById('custom-cursor');
 const measureSpan = document.getElementById('measure-span');
 
-// ================= 矩阵雨背景 =================
-const canvas = document.getElementById('matrix-canvas');
-const ctx = canvas.getContext('2d');
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-const chars = "太原蒼天已死黃天當立歲在甲子天下大吉王侯將相寧有種乎".split("");
-const fontSize = 16;
-let columns = Math.floor(canvas.width / fontSize);
-let drops = Array(columns).fill(1);
-
-function drawMatrix() {
-  ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
-  ctx.fillStyle = '#0F0';
-  ctx.font = fontSize + 'px monospace';
-  
-  for (let i = 0; i < drops.length; i++) {
-    const text = chars[Math.floor(Math.random() * chars.length)];
-    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-    
-    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-      drops[i] = 0;
-    }
-    drops[i]++;
-  }
-}
-setInterval(drawMatrix, 50);
-
-// ================= 终端逻辑 =================
 const commands = {
   help: [
     '可用命令：',
@@ -300,28 +270,24 @@ const commands = {
   '': ''
 };
 
-// 打字机效果打印
 async function typeLine(text, cls = '') {
   const div = document.createElement('div');
   div.className = 'line ' + cls;
   output.appendChild(div);
-  
+
   for (let i = 0; i < text.length; i++) {
     div.textContent += text[i];
-    // 遇到换行符特殊处理
     if (text[i] === '\n') {
       div.innerHTML = div.textContent.replace(/\n/g, '<br>');
     }
-    await new Promise(r => setTimeout(r, 15)); // 打字速度
+    await new Promise(r => setTimeout(r, 15));
   }
-  // 确保多行文本最后的HTML正确
   if (text.includes('\n')) {
     div.innerHTML = div.textContent.replace(/\n/g, '<br>');
   }
   window.scrollTo(0, document.body.scrollHeight);
 }
 
-// 快速打印（带高亮）
 function printHTML(html) {
   const div = document.createElement('div');
   div.className = 'line';
@@ -331,27 +297,24 @@ function printHTML(html) {
   window.scrollTo(0, document.body.scrollHeight);
 }
 
-// 初始化打字机输出
 async function initTerminal() {
   await new Promise(r => setTimeout(r, 500));
-  await typeLine('$ init stellaric-shell v1.0', 'dim');
+  await typeLine('$ init stellaric-shell v2.0', 'dim');
   await typeLine('> 正在分析请求路径...', 'dim');
-  await typeLine('> 结果：该页面不存在于这个宇宙', '');
+  await typeLine('> 结果：该页面不存在于这个宇宙', 'cyan');
   await typeLine('> 但你既然来了，不如和这个终端聊聊？', '');
   await typeLine('> 输入 help 查看可用命令', 'dim');
-  
+
   const br = document.createElement('br');
   output.appendChild(br);
 }
 
 initTerminal();
 
-// ================= 输入框光标跟随 =================
 function updateCursor() {
   measureSpan.textContent = input.value;
   const inputRect = input.getBoundingClientRect();
   const measureRect = measureSpan.getBoundingClientRect();
-  // 光标相对于容器定位
   cursor.style.left = (measureRect.width) + 'px';
 }
 
@@ -359,7 +322,6 @@ input.addEventListener('input', updateCursor);
 input.addEventListener('focus', () => cursor.style.display = 'block');
 input.addEventListener('blur', () => cursor.style.display = 'none');
 
-// ================= 命令处理 =================
 input.addEventListener('keydown', async function(e) {
   if (e.key === 'Enter') {
     const cmd = input.value.trim();
@@ -381,14 +343,12 @@ input.addEventListener('keydown', async function(e) {
     } else if (cmd === 'whoami' || cmd === 'ls' || cmd === 'hi' || cmd === 'exit') {
       await typeLine(commands[cmd]);
     } else if (cmd === 'sudo') {
-      // 触发屏幕抖动效果
       document.body.classList.add('glitch-screen');
       setTimeout(() => document.body.classList.remove('glitch-screen'), 400);
       await typeLine(commands.sudo);
     } else if (cmd === 'clear') {
       output.innerHTML = '';
     } else if (cmd === '') {
-      // 空命令
     } else if (cmd === 'rm -rf /') {
       await typeLine('nice try 😏 但这个网站是静态的，你删不掉的。');
     } else if (cmd.startsWith('cd ')) {
@@ -399,15 +359,14 @@ input.addEventListener('keydown', async function(e) {
   }
 });
 
-// 点击页面任意位置聚焦输入框
 document.addEventListener('click', (e) => {
   if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
     input.focus();
   }
 });
 
-// 初始更新光标位置
 setTimeout(updateCursor, 100);
 </script>
+<script src="bg-particles.js"></script>
 </body>
 </html>
