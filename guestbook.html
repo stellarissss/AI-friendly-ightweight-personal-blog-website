@@ -13,6 +13,7 @@
 
     <link rel="canonical" href="https://stellaric.site/guestbook.html">
     <link rel="stylesheet" href="style.css">
+    <script src="background.js" defer></script>
 
     <script type="application/ld+json">
     {
@@ -28,9 +29,11 @@
     </script>
 </head>
 <body>
+    <canvas id="bg-canvas"></canvas>
+
     <nav>
         <div class="nav-container">
-            <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
+            <div class="nav-brand"><a href="index.html">visitor@stellaris:~$</a></div>
             <div class="nav-links">
                 <a href="index.html">首页</a>
                 <a href="blog.html">博客</a>
@@ -43,7 +46,7 @@
     <div class="container">
         <header class="page-header fade-in">
             <div class="eyebrow">GUESTBOOK / LEAVE A MESSAGE</div>
-            <h1>留言板</h1>
+            <h1 class="glitch">留言板</h1>
             <p class="subtitle">说点什么吧...?</p>
         </header>
 

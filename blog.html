@@ -13,6 +13,7 @@
 
     <link rel="canonical" href="https://stellaric.site/blog.html">
     <link rel="stylesheet" href="style.css">
+    <script src="background.js" defer></script>
 
     <!-- 结构化数据：博客 -->
     <script type="application/ld+json">
@@ -29,9 +30,11 @@
     </script>
 </head>
 <body>
+    <canvas id="bg-canvas"></canvas>
+
     <nav>
         <div class="nav-container">
-            <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
+            <div class="nav-brand"><a href="index.html">visitor@stellaris:~$</a></div>
             <div class="nav-links">
                 <a href="index.html">首页</a>
                 <a href="blog.html" class="active">博客</a>
@@ -44,7 +47,7 @@
     <div class="container">
         <header class="page-header fade-in">
             <div class="eyebrow">BLOG / WRITINGS</div>
-            <h1>博客</h1>
+            <h1 class="glitch">博客</h1>
             <p class="subtitle">记录学习过程、折腾和思考。</p>
         </header>
 

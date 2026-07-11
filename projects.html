@@ -10,15 +10,16 @@
     <meta property="og:type" content="website">
     <meta property="og:locale" content="zh_CN">
     <link rel="canonical" href="https://stellaric.site/projects.html">
-    <link rel="stylesheet" href="style.css?v=20260621">
+    <link rel="stylesheet" href="style.css">
+    <script src="background.js" defer></script>
     <!-- 引入 Markdown 解析库 -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        /* 编辑器专属样式 */
+        /* 编辑器专属样式 — 深色黑客风 */
         .md-editor-wrapper {
             margin-top: 2rem;
         }
-        
+
         /* 工具栏样式 */
         .md-toolbar {
             display: flex;
@@ -31,7 +32,7 @@
         }
         .md-toolbar button {
             background: var(--bg);
-            color: var(--fg);
+            color: var(--fg-2);
             border: 1px solid var(--line-2);
             padding: 0.4rem 0.8rem;
             font-size: 0.85rem;
@@ -40,28 +41,31 @@
             transition: all var(--t);
         }
         .md-toolbar button:hover {
-            background: var(--fg);
+            background: var(--accent);
             color: var(--bg);
-            border-color: var(--fg);
+            border-color: var(--accent);
+            box-shadow: 0 0 8px var(--accent-dim);
         }
-        
+
         .md-action-buttons {
             display: flex;
             gap: 1rem;
             margin-bottom: 1rem;
         }
         .md-action-buttons button {
-            background: var(--fg);
-            color: var(--bg);
-            border: 1px solid var(--fg);
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
             padding: 0.5rem 1.2rem;
             font-size: 0.85rem;
             font-family: var(--font-mono);
+            letter-spacing: 0.02em;
             transition: all var(--t);
         }
         .md-action-buttons button:hover {
-            background: var(--bg);
-            color: var(--fg);
+            background: var(--accent);
+            color: var(--bg);
+            box-shadow: 0 0 10px var(--accent-dim);
         }
 
         .md-editor-container {
@@ -83,11 +87,15 @@
             outline: none;
             border-right: 1px solid var(--line);
         }
+        .md-editor-input:focus {
+            box-shadow: inset 2px 0 0 var(--accent);
+        }
         .md-editor-preview {
             width: 50%;
             padding: 1rem 1.5rem;
             overflow-y: auto;
             background: var(--bg-soft);
+            border-left: 1px solid var(--line);
         }
         /* 复用 blog-post.html 的 markdown 排版样式 */
         .md-editor-preview h1, .md-editor-preview h2, .md-editor-preview h3,
@@ -95,10 +103,15 @@
         .md-editor-preview blockquote, .md-editor-preview code, .md-editor-preview pre {
             margin-bottom: 1rem;
         }
-        .md-editor-preview h1 { font-size: 1.5rem; border-bottom: 1px solid var(--line); padding-bottom: 0.5rem;}
+        .md-editor-preview h1 { font-size: 1.5rem; border-bottom: 1px solid var(--line); padding-bottom: 0.5rem; }
         .md-editor-preview h2 { font-size: 1.2rem; }
-        .md-editor-preview a { color: #000; text-decoration: underline; }
-        .md-editor-preview code { background: #eee; padding: 2px 4px; border-radius: 3px; font-family: var(--font-mono);}
+        .md-editor-preview p { color: var(--fg-2); }
+        .md-editor-preview a { color: var(--accent); text-decoration: none; background-image: linear-gradient(var(--accent), var(--accent)); background-size: 100% 1px; background-position: 0 100%; background-repeat: no-repeat; }
+        .md-editor-preview a:hover { background-size: 100% 2px; }
+        .md-editor-preview code { background: var(--bg); color: var(--accent); padding: 2px 6px; border: 1px solid var(--line-2); border-radius: 3px; font-family: var(--font-mono); font-size: 0.88em; }
+        .md-editor-preview pre { background: #050505; color: var(--fg); padding: 1rem; border-left: 2px solid var(--accent); overflow-x: auto; }
+        .md-editor-preview pre code { background: none; border: none; padding: 0; color: inherit; }
+        .md-editor-preview blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--fg-3); margin: 1rem 0; }
 
         @media (max-width: 640px) {
             .md-editor-container { flex-direction: column; height: auto; }
@@ -107,9 +120,11 @@
     </style>
 </head>
 <body>
+    <canvas id="bg-canvas"></canvas>
+
     <nav>
         <div class="nav-container">
-            <div class="nav-brand"><a href="index.html">stellaris's BLOG</a></div>
+            <div class="nav-brand"><a href="index.html">visitor@stellaris:~$</a></div>
             <div class="nav-links">
                 <a href="index.html">首页</a>
                 <a href="blog.html">博客</a>
@@ -121,15 +136,15 @@
     <div class="container">
         <header class="page-header fade-in">
             <div class="eyebrow">PROJECTS / WORKS</div>
-            <h1>一些小项目...?</h1>
+            <h1 class="glitch">一些小项目...?</h1>
             <p class="subtitle">这里将收录我折腾过的各种小东西。</p>
         </header>
-        
+
         <main class="fade-in d1">
             <section class="md-editor-wrapper">
-                <h2>在线 Markdown 编辑器</h2>
+                <h2><span class="sec-num">01</span>在线 Markdown 编辑器</h2>
                 <p>用于本人快速撰写博客文章。</p>
-                
+
                 <!-- 工具栏：点击插入语法 -->
                 <div class="md-toolbar">
                     <button onclick="formatText('**')" title="加粗"><strong>B</strong></button>
@@ -154,14 +169,14 @@
             </section>
 
 
-	    <section style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line);">
-    <div class="section-label">PERSONAL CLOUD DRIVE</div>
-    <h2>个人云盘</h2>
-    <p style="color:var(--fg-3); margin-bottom:2rem;">这里放一些我分享的文件，可直接下载。</p>
-    <div id="cloud-files">
-        <p class="status-msg">加载中...</p>
-    </div>
-</section>
+            <section style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line);">
+                <div class="section-label">PERSONAL CLOUD DRIVE</div>
+                <h2><span class="sec-num">02</span>个人云盘</h2>
+                <p style="color:var(--fg-3); margin-bottom:2rem;">这里放一些我分享的文件，可直接下载。</p>
+                <div id="cloud-files">
+                    <p class="status-msg">加载中...</p>
+                </div>
+            </section>
         </main>
 
         <footer>
@@ -190,10 +205,10 @@
             const selectedText = input.value.substring(start, end) || "文本";
             const before = input.value.substring(0, start);
             const after = input.value.substring(end);
-            
+
             const newText = wrap + selectedText + wrap;
             input.value = before + newText + after;
-            
+
             // 重新选中刚刚包裹的文本
             input.focus();
             input.selectionStart = start;
@@ -208,10 +223,10 @@
             const selectedText = input.value.substring(start, end);
             const before = input.value.substring(0, start);
             const after = input.value.substring(end);
-            
+
             const newText = prefix + selectedText;
             input.value = before + newText + after;
-            
+
             input.focus();
             input.selectionStart = start;
             input.selectionEnd = start + newText.length;
@@ -225,10 +240,10 @@
             const selectedText = input.value.substring(start, end) || "链接文本";
             const before = input.value.substring(0, start);
             const after = input.value.substring(end);
-            
+
             const newText = `[${selectedText}](https://)`;
             input.value = before + newText + after;
-            
+
             input.focus();
             // 将光标定位到括号内，方便直接填链接
             input.selectionStart = start + newText.length - 1;
@@ -253,35 +268,35 @@
             link.click();
         }
 
-    function formatSize(b){
-    if(b < 1024) return b + ' B';
-    if(b < 1048576) return (b/1024).toFixed(1) + ' KB';
-    if(b < 1073741824) return (b/1048576).toFixed(1) + ' MB';
-    return (b/1073741824).toFixed(2) + ' GB';
-}
-function formatDate(ts){
-    const d = new Date(ts * 1000);
-    return d.getFullYear() + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + String(d.getDate()).padStart(2,'0');
-}
-fetch('/list.php')
-    .then(r => r.json())
-    .then(files => {
-        const box = document.getElementById('cloud-files');
-        if(!files.length){
-            box.innerHTML = '<p class="status-msg">暂无文件</p>';
-            return;
+        function formatSize(b) {
+            if (b < 1024) return b + ' B';
+            if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+            if (b < 1073741824) return (b / 1048576).toFixed(1) + ' MB';
+            return (b / 1073741824).toFixed(2) + ' GB';
         }
-        box.innerHTML = files.map(f => `
-            <article class="card">
-                <div class="meta">${formatDate(f.time)} ·${formatSize(f.size)}</div>
-            	<h3><a href="/download.php?f=${encodeURIComponent(f.name)}" download>${f.name}</a></h3>
-            	<p>点击下载</p>
-            </article>
-        `).join('');
-    })
-    .catch(() => {
-        document.getElementById('cloud-files').innerHTML = '<p class="error-msg">加载失败，请稍后重试</p>';
-    });
+        function formatDate(ts) {
+            const d = new Date(ts * 1000);
+            return d.getFullYear() + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + String(d.getDate()).padStart(2, '0');
+        }
+        fetch('/list.php')
+            .then(r => r.json())
+            .then(files => {
+                const box = document.getElementById('cloud-files');
+                if (!files.length) {
+                    box.innerHTML = '<p class="status-msg">暂无文件</p>';
+                    return;
+                }
+                box.innerHTML = files.map(f => `
+                    <article class="card">
+                        <div class="meta">${formatDate(f.time)} · ${formatSize(f.size)}</div>
+                        <h3><a href="/download.php?f=${encodeURIComponent(f.name)}" download>${f.name}</a></h3>
+                        <p>点击下载</p>
+                    </article>
+                `).join('');
+            })
+            .catch(() => {
+                document.getElementById('cloud-files').innerHTML = '<p class="error-msg">加载失败，请稍后重试</p>';
+            });
     </script>
 </body>
 </html>
